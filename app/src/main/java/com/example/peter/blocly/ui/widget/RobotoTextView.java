@@ -45,16 +45,68 @@ public class RobotoTextView extends TextView {
         if (robotoFontIndex < 0 || robotoFontIndex >= stringArray.length) {
             return;
         }
+
+    /* challenge code */
+        boolean condensed = false;
+        String robotoStyle = "";
+        String parseMe = stringArray[robotoFontIndex];
+        if(parseMe.contains("Condensed"))
+            condensed = true;
+        if(parseMe.contains("Black")) robotoStyle += "Black";
+        else if(parseMe.contains("Bold")) robotoStyle += "Bold";
+        else if(parseMe.contains("Light")) robotoStyle += "Light";
+        else if(parseMe.contains("Medium")) robotoStyle += "Medium";
+        else if(parseMe.contains("Regular")) robotoStyle += "Regular";
+        else if(parseMe.contains("Thin")) robotoStyle += "Thin";
+        else robotoStyle += "";
+        if(parseMe.contains("Italic")) robotoStyle += "Italic";
+        robotoStyle += ".ttf";
+    /* challenge code */
+
+
+
         String robotoFont = stringArray[robotoFontIndex];
+
+
         Typeface robotoTypeface = null;
 
-        if (sTypefaces.containsKey(robotoFont)) {
-            robotoTypeface = sTypefaces.get(robotoFont);
-        } else {
-            robotoTypeface = Typeface.createFromAsset(getResources().getAssets(),
-                    "fonts/RobotoTTF/" + robotoFont);
-            sTypefaces.put(robotoFont, robotoTypeface);
+        System.out.println(robotoFont);
+        System.err.println(robotoStyle);
+
+///* challenge code
+        if(condensed) {
+            if (sTypefaces.containsKey("RobotoCondensed-"+robotoStyle)) {
+                robotoTypeface = sTypefaces.get("RobotoCondensed-"+robotoStyle);
+            } else {
+                robotoTypeface = Typeface.createFromAsset(getResources().getAssets(),
+                        "fonts/RobotoTTF/" + "RobotoCondensed-"+robotoStyle);
+                sTypefaces.put("RobotoCondensed-"+robotoStyle, robotoTypeface);
+            }
+            setTypeface(robotoTypeface);
         }
-        setTypeface(robotoTypeface);
+        else {
+            if (sTypefaces.containsKey("Roboto-"+robotoStyle)) {
+                robotoTypeface = sTypefaces.get("Roboto-"+robotoStyle);
+            } else {
+                robotoTypeface = Typeface.createFromAsset(getResources().getAssets(),
+                        "fonts/RobotoTTF/" + "Roboto-"+robotoStyle);
+                sTypefaces.put("Roboto-"+robotoStyle, robotoTypeface);
+            }
+            setTypeface(robotoTypeface);
+        }
+//*/
+        /*
+                    if (sTypefaces.containsKey(robotoFont)) {
+                robotoTypeface = sTypefaces.get(robotoFont);
+            } else {
+                robotoTypeface = Typeface.createFromAsset(getResources().getAssets(),
+                        "fonts/RobotoTTF/" + robotoFont);
+                sTypefaces.put(robotoFont, robotoTypeface);
+            }
+
+            setTypeface(robotoTypeface);
+         */
+        System.out.println(robotoFont);
+        System.err.println(robotoStyle);
     }
 }
