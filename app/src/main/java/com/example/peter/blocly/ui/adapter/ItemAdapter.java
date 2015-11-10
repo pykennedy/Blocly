@@ -1,11 +1,13 @@
 package com.example.peter.blocly.ui.adapter;
 
+import android.animation.ValueAnimator;
 import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -48,10 +50,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                                 implements ImageLoadingListener, View.OnClickListener,
                                             CompoundButton.OnCheckedChangeListener {
         boolean contentExpanded;
+        boolean expandHeader;
         TextView title;
         TextView feed;
         TextView content;
         View headerWrapper;
+        View compactHeaderWrapper;
         ImageView headerImage;
         RssItem rssItem;
         CheckBox archiveCheckbox;
@@ -66,8 +70,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             feed = (TextView) itemView.findViewById(R.id.tv_rss_item_feed_title);
             content = (TextView) itemView.findViewById(R.id.tv_rss_item_content);
 
+            compactHeaderWrapper = itemView.findViewById(R.id.fl_rss_item_image_header_comp);
+            compactHeaderWrapper.setVisibility(View.VISIBLE);
+
             headerWrapper = itemView.findViewById(R.id.fl_rss_item_image_header);
             headerImage = (ImageView) headerWrapper.findViewById(R.id.iv_rss_item_image);
+            headerWrapper.setVisibility(View.GONE);
 
             archiveCheckbox = (CheckBox) itemView.findViewById(R.id.cb_rss_item_check_mark);
             favoriteCheckbox = (CheckBox) itemView.findViewById(R.id.cb_rss_item_favorite_star);
@@ -106,27 +114,70 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
             Log.e(TAG, "onLoadingFailed: " + failReason.toString() + " for URL: " + imageUri,
                     new Throwable());
+            headerWrapper.setVisibility(View.GONE);
+            compactHeaderWrapper.setVisibility(View.VISIBLE);
+            expandHeader = false;
         }
 
         @Override
         public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
             if (imageUri.equals(rssItem.getImageUrl())) {
+                compactHeaderWrapper.setVisibility(View.VISIBLE);
                 headerImage.setImageBitmap(loadedImage);
                 headerImage.setVisibility(View.VISIBLE);
+                headerWrapper.setVisibility(View.INVISIBLE);
+                expandHeader=true;
+                /*
+                START OF CHECKPOINT CODE
+                */
+                ///*
+                int startingHeight = compactHeaderWrapper.getMeasuredHeight();
+                int finalHeight = headerWrapper.getMeasuredHeight();
+                    startingHeight = finalHeight;
+                    headerWrapper.setAlpha(0f);
+                    headerWrapper.setVisibility(View.VISIBLE);
+                    headerWrapper.measure(
+                            View.MeasureSpec.makeMeasureSpec(compactHeaderWrapper.getWidth(), View.MeasureSpec.EXACTLY),
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                    );
+                    finalHeight = headerWrapper.getMeasuredHeight();
+                startAnimator(startingHeight, finalHeight, new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                        float animatedFraction = valueAnimator.getAnimatedFraction();
+                        float wrapperAlpha = expandHeader ? animatedFraction : 1f - animatedFraction;
+                        float contentAlpha = 1f - wrapperAlpha;
+
+                        headerWrapper.setAlpha(wrapperAlpha);
+                        compactHeaderWrapper.setAlpha(contentAlpha);
+                        headerWrapper.getLayoutParams().height = animatedFraction == 1f ?
+                                ViewGroup.LayoutParams.WRAP_CONTENT :
+                                (Integer) valueAnimator.getAnimatedValue();
+                        headerWrapper.requestLayout();
+                        if (animatedFraction == 1f) {
+                                compactHeaderWrapper.setVisibility(View.GONE);
+                        }
+                    }
+                });
+                //*/
+                /*
+                END OF CHECKPOINT CODE
+                 */
             }
         }
 
         @Override
         public void onLoadingCancelled(String imageUri, View view) {
             ImageLoader.getInstance().loadImage(imageUri, this);
+            headerWrapper.setVisibility(View.GONE);
+            compactHeaderWrapper.setVisibility(View.VISIBLE);
+            expandHeader=false;
         }
 
         @Override
         public void onClick(View view) {
             if (view == itemView) {
-                contentExpanded = !contentExpanded;
-                expandedContentWrapper.setVisibility(contentExpanded ? View.VISIBLE : View.GONE);
-                content.setVisibility(contentExpanded ? View.GONE : View.VISIBLE);
+                animateContent(!contentExpanded);
             } else {
                 Toast.makeText(view.getContext(), "Visit " + rssItem.getUrl(), Toast.LENGTH_SHORT).show();
             }
@@ -140,6 +191,58 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                 Log.v(TAG, "Checkmark checkbox changed to: " + isChecked);
             else
                 Log.v(TAG, "Unknown checkbox changed to: " + isChecked);
+        }
+
+        private void animateContent(final boolean expand) {
+            if ((expand && contentExpanded) || (!expand && !contentExpanded)) {
+                return;
+            }
+            int startingHeight = expandedContentWrapper.getMeasuredHeight();
+            int finalHeight = content.getMeasuredHeight();
+            if (expand) {
+                startingHeight = finalHeight;
+                expandedContentWrapper.setAlpha(0f);
+                expandedContentWrapper.setVisibility(View.VISIBLE);
+                expandedContentWrapper.measure(
+                        View.MeasureSpec.makeMeasureSpec(content.getWidth(), View.MeasureSpec.EXACTLY),
+                        ViewGroup.LayoutParams.WRAP_CONTENT
+                );
+                finalHeight = expandedContentWrapper.getMeasuredHeight();
+            } else {
+                content.setVisibility(View.VISIBLE);
+            }
+            startAnimator(startingHeight, finalHeight, new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    float animatedFraction = valueAnimator.getAnimatedFraction();
+                    float wrapperAlpha = expand ? animatedFraction : 1f - animatedFraction;
+                    float contentAlpha = 1f - wrapperAlpha;
+
+                    expandedContentWrapper.setAlpha(wrapperAlpha);
+                    content.setAlpha(contentAlpha);
+                    expandedContentWrapper.getLayoutParams().height = animatedFraction == 1f ?
+                            ViewGroup.LayoutParams.WRAP_CONTENT :
+                            (Integer) valueAnimator.getAnimatedValue();
+                    expandedContentWrapper.requestLayout();
+                    if (animatedFraction == 1f) {
+                        if (expand) {
+                            content.setVisibility(View.GONE);
+                        } else {
+                            expandedContentWrapper.setVisibility(View.GONE);
+                        }
+                    }
+                }
+            });
+            contentExpanded = expand;
+        }
+        private void startAnimator(int start, int end,
+                                   ValueAnimator.AnimatorUpdateListener animatorUpdateListener) {
+            ValueAnimator valueAnimator = ValueAnimator.ofInt(start, end);
+            valueAnimator.addUpdateListener(animatorUpdateListener);
+            valueAnimator.setDuration(itemView.getResources().getInteger(
+                    android.R.integer.config_mediumAnimTime));
+            valueAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+            valueAnimator.start();
         }
     }
 
