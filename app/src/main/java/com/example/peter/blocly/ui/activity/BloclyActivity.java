@@ -11,15 +11,19 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.example.peter.blocly.R;
 import com.example.peter.blocly.ui.adapter.ItemAdapter;
+import com.example.peter.blocly.ui.adapter.NavigationDrawerAdapter;
 
-public class BloclyActivity extends ActionBarActivity {
+public class BloclyActivity extends ActionBarActivity
+                            implements NavigationDrawerAdapter.Delegater{
 
     private ItemAdapter itemAdapter;
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
+    private NavigationDrawerAdapter navigationDrawerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,19 @@ public class BloclyActivity extends ActionBarActivity {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0, 0);
         drawerLayout.setDrawerListener(drawerToggle);
         drawerLayout.openDrawer(Gravity.LEFT);
+
+        navigationDrawerAdapter = new NavigationDrawerAdapter();
+        navigationDrawerAdapter.setDelegate(this);
+        RecyclerView navigationRecyclerView = (RecyclerView) findViewById(R.id.rv_nav_activity_blocly);
+        navigationRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        navigationRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        navigationRecyclerView.setAdapter(navigationDrawerAdapter);
+    }
+
+    @Override
+    public void echoClick(NavigationDrawerAdapter adapter) {
+        drawerLayout.closeDrawers();
+        Toast.makeText(this, "Nothing... yet!", Toast.LENGTH_SHORT).show();
     }
 
     @Override
