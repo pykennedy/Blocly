@@ -22,14 +22,15 @@
             <enum name="CondensedRegular" value="17"/>
         </attr>
         <attr name="condensed" format="boolean" />
+        <attr name="italic" format="boolean" />
         <attr name="robotoStyle">
             <flag name="Black" value="0"/>
-            <flag name="Italic" value="1"/>
-            <flag name="Bold" value="2"/>
-            <flag name="Light" value="5"/>
-            <flag name="Medium" value="7"/>
-            <flag name="Regular" value="9"/>
-            <flag name="Thing" value="10"/>
+            <flag name="Bold" value="1"/>
+            <flag name="Light" value="2"/>
+            <flag name="Medium" value="3"/>
+            <flag name="Regular" value="4"/>
+            <flag name="Thin" value="5"/>
+            <flag name="Italic" value="6"/>
         </attr>
     </declare-styleable>
 </resources>

@@ -38,16 +38,29 @@ public class RobotoTextView extends TextView {
         }
         TypedArray typedArray = getContext().getTheme().obtainStyledAttributes(
                 attrs, R.styleable.Roboto, 0, 0);
-        int robotoFontIndex = typedArray.getInteger(R.styleable.Roboto_robotoFont, -1);
+        //int robotoFontIndex = typedArray.getInteger(R.styleable.Roboto_robotoFont, -1);
+        boolean condensed = typedArray.getBoolean(R.styleable.Roboto_condensed, false);
+        boolean italic = typedArray.getBoolean(R.styleable.Roboto_italic, false);
+        int robotoFontIndex = typedArray.getInteger(R.styleable.Roboto_robotoStyle, -1);
+        String[] baseFonts = getResources().getStringArray(R.array.robotoStyle);
+        if(robotoFontIndex < 0 || robotoFontIndex >= baseFonts.length)
+            return;
+        String robotoStyle = baseFonts[robotoFontIndex];
+        String robotoFontFull = "Roboto-";
+        if(condensed) {
+            robotoFontFull = "RobotoCondensed-";
+        }
+        if(robotoStyle.equals("Italic")) {
+            robotoFontFull += "Italic";
+        }
+        else
+            robotoFontFull += robotoStyle;
+        if(italic && !robotoStyle.equals("Italic"))
+            robotoFontFull += "Italic";
+        robotoFontFull += ".ttf";
+
         // try something like typedArray.getInteger(R.styleable.Robot_robotoStyle,-1);
         typedArray.recycle();
-        String[] stringArray = getResources().getStringArray(R.array.roboto_font_file_names);
-
-        if (robotoFontIndex < 0 || robotoFontIndex >= stringArray.length) {
-            return;
-        }
-
-        String robotoFont = stringArray[robotoFontIndex];
 
 
         Typeface robotoTypeface = null;
@@ -55,12 +68,12 @@ public class RobotoTextView extends TextView {
         //System.out.println(robotoFont);
 
 
-        if (sTypefaces.containsKey(robotoFont)) {
-            robotoTypeface = sTypefaces.get(robotoFont);
+        if (sTypefaces.containsKey(robotoFontFull)) {
+            robotoTypeface = sTypefaces.get(robotoFontFull);
         } else {
             robotoTypeface = Typeface.createFromAsset(getResources().getAssets(),
-                    "fonts/RobotoTTF/" + robotoFont);
-            sTypefaces.put(robotoFont, robotoTypeface);
+                    "fonts/RobotoTTF/" + robotoFontFull);
+            sTypefaces.put(robotoFontFull, robotoTypeface);
         }
 
         setTypeface(robotoTypeface);
