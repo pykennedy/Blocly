@@ -68,7 +68,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             title = (TextView) itemView.findViewById(R.id.tv_rss_item_title);
             feed = (TextView) itemView.findViewById(R.id.tv_rss_item_feed_title);
             content = (TextView) itemView.findViewById(R.id.tv_rss_item_content);
-
             headerWrapper = itemView.findViewById(R.id.fl_rss_item_image_header);
             headerImage = (ImageView) headerWrapper.findViewById(R.id.iv_rss_item_image);
             //headerWrapper.setVisibility(View.GONE);
@@ -82,7 +81,15 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
 
             itemView.setOnClickListener(this);
             visitSite.setOnClickListener(this);
+/*
+            headerWrapper.setOnClickListener(new View.OnClickListener(){
 
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(v.getContext(), "PIng Pong " + v.getId(), Toast.LENGTH_SHORT).show();
+                }
+            });
+*/
             archiveCheckbox.setOnCheckedChangeListener(this);
             favoriteCheckbox.setOnCheckedChangeListener(this);
         }
@@ -129,11 +136,11 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                     headerWrapper.setAlpha(0f);
                     headerWrapper.setVisibility(View.VISIBLE);
                     headerWrapper.measure(
-                            View.MeasureSpec.makeMeasureSpec(headerWrapper.getWidth(), View.MeasureSpec.EXACTLY),
+                            View.MeasureSpec.makeMeasureSpec(headerWrapper.getHeight(), View.MeasureSpec.EXACTLY),
                             ViewGroup.LayoutParams.WRAP_CONTENT
                     );
                 int startingHeight = headerWrapper.getMeasuredHeight();
-                final int finalHeight = headerWrapper.getMeasuredHeight()*2;
+                final int finalHeight = headerWrapper.getMeasuredHeight()+140;
                 startAnimator(startingHeight, finalHeight, new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -167,10 +174,12 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         public void onClick(View view) {
             if (view == itemView) {
                 animateContent(!contentExpanded);
-            } else {
+            }
+            else {
                 Toast.makeText(view.getContext(), "Visit " + rssItem.getUrl(), Toast.LENGTH_SHORT).show();
             }
         }
+
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -181,7 +190,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
             else
                 Log.v(TAG, "Unknown checkbox changed to: " + isChecked);
         }
-
         private void animateContent(final boolean expand) {
             if ((expand && contentExpanded) || (!expand && !contentExpanded)) {
                 return;
@@ -206,7 +214,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                     float animatedFraction = valueAnimator.getAnimatedFraction();
                     float wrapperAlpha = expand ? animatedFraction : 1f - animatedFraction;
                     float contentAlpha = 1f - wrapperAlpha;
-
                     expandedContentWrapper.setAlpha(wrapperAlpha);
                     content.setAlpha(contentAlpha);
                     expandedContentWrapper.getLayoutParams().height = animatedFraction == 1f ?
@@ -215,9 +222,9 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                     expandedContentWrapper.requestLayout();
                     if (animatedFraction == 1f) {
                         if (expand) {
-                            //content.setVisibility(View.GONE);
+                            content.setVisibility(View.GONE);
                         } else {
-                            //expandedContentWrapper.setVisibility(View.GONE);
+                            expandedContentWrapper.setVisibility(View.GONE);
                         }
                     }
                 }
