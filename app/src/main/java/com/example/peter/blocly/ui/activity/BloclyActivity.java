@@ -1,5 +1,6 @@
 package com.example.peter.blocly.ui.activity;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -157,6 +158,15 @@ public class BloclyActivity extends ActionBarActivity
             return true;
         }
         Toast.makeText(this, item.getTitle(), Toast.LENGTH_SHORT).show();
+
+        if(item.getTitle().equals("Share")) {
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.putExtra(Intent.EXTRA_TEXT, String.format("%s", itemAdapter.getExpandedItem().getTitle()));
+            sendIntent.setType("text/plain");
+            startActivity(sendIntent);
+        }
+
         return super.onOptionsItemSelected(item);
     }
 
