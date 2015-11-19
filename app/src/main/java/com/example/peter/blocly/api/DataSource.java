@@ -35,7 +35,7 @@ public class DataSource {
             items.add(new RssItem(String.valueOf(i),
                     BloclyApplication.getSharedInstance().getString(R.string.placeholder_headline) + " " + i,
                     BloclyApplication.getSharedInstance().getString(R.string.placeholder_content),
-                    "http://favoritefeed.net?story_id=an-incredible-news-story",
+                    "http://spendyourleapsecondhere.com/",
                     "https://i.ytimg.com/vi/pbS--riCP8w/hqdefault.jpg",
                     0, System.currentTimeMillis(), false, false));
         }
