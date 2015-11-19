@@ -28,6 +28,7 @@ public class BloclyActivity extends ActionBarActivity
         implements NavigationDrawerAdapter.NavigationDrawerAdapterDelegate,
                     ItemAdapter.DataSource, ItemAdapter.Delegate {
 
+    private RecyclerView recyclerView;
     private ItemAdapter itemAdapter;
     private ActionBarDrawerToggle drawerToggle;
     private DrawerLayout drawerLayout;
@@ -47,7 +48,7 @@ public class BloclyActivity extends ActionBarActivity
         itemAdapter.setDataSource(this);
         itemAdapter.setDelegate(this);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
+        recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(itemAdapter);
@@ -200,6 +201,9 @@ public class BloclyActivity extends ActionBarActivity
         }
         if (positionToExpand > -1) {
             itemAdapter.notifyItemChanged(positionToExpand);
+        } else {
+            return;
         }
+        recyclerView.smoothScrollBy(0, recyclerView.getLayoutManager().findViewByPosition(positionToExpand).getTop());
     }
 }
