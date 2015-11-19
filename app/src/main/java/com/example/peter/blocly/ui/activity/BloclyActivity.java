@@ -35,6 +35,7 @@ public class BloclyActivity extends ActionBarActivity
     private NavigationDrawerAdapter navigationDrawerAdapter;
     private Menu menu;
     private View overflowButton;
+    private boolean wasEnabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,13 +68,21 @@ public class BloclyActivity extends ActionBarActivity
                 if (menu == null) {
                     return;
                 }
-                for (int i = 0; i < menu.size(); i++) {
+                for (int i = 1; i < menu.size(); i++) {
                     MenuItem item = menu.getItem(i);
                     item.setEnabled(true);
                     Drawable icon = item.getIcon();
                     if (icon != null) {
                         icon.setAlpha(255);
                     }
+                }
+                if(wasEnabled) {
+                    menu.getItem(0).getIcon().setAlpha(255);
+                    menu.getItem(0).setEnabled(true);
+                }
+                else {
+                    menu.getItem(0).getIcon().setAlpha(0);
+                    menu.getItem(0).setEnabled(false);
                 }
             }
             @Override
@@ -109,6 +118,8 @@ public class BloclyActivity extends ActionBarActivity
                     return;
                 }
                 for (int i = 0; i < menu.size(); i++) {
+                    if(!wasEnabled)
+                        i++;
                     MenuItem item = menu.getItem(i);
                     Drawable icon = item.getIcon();
                     if (icon != null) {
@@ -153,6 +164,8 @@ public class BloclyActivity extends ActionBarActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.blocly, menu);
         this.menu = menu;
+        this.menu.getItem(0).getIcon().setAlpha(0);
+        this.menu.getItem(0).setEnabled(false);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -185,6 +198,7 @@ public class BloclyActivity extends ActionBarActivity
 
     @Override
     public void onItemClicked(ItemAdapter itemAdapter, RssItem rssItem) {
+
         int positionToExpand = -1;
         int positionToContract = -1;
         if (itemAdapter.getExpandedItem() != null) {
@@ -205,8 +219,15 @@ public class BloclyActivity extends ActionBarActivity
         }
         if (positionToExpand > -1) {
             itemAdapter.notifyItemChanged(positionToExpand);
-        } else
+            menu.getItem(0).getIcon().setAlpha(255);
+            menu.getItem(0).setEnabled(true);
+            wasEnabled = true;
+        } else {
+            menu.getItem(0).getIcon().setAlpha(0);
+            menu.getItem(0).setEnabled(false);
+            wasEnabled = false;
             return;
+        }
         int lessToScroll = 0;
         if(positionToContract > -1 && positionToContract < positionToExpand) {
             lessToScroll = itemAdapter.getExpandedItemHeight() - itemAdapter.getCollapsedItemHeight();
