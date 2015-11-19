@@ -15,15 +15,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.peter.blocly.BloclyApplication;
 import com.example.peter.blocly.R;
 import com.example.peter.blocly.api.model.RssFeed;
+import com.example.peter.blocly.api.model.RssItem;
 import com.example.peter.blocly.ui.adapter.ItemAdapter;
 import com.example.peter.blocly.ui.adapter.NavigationDrawerAdapter;
 
 import java.util.ArrayList;
 
 public class BloclyActivity extends ActionBarActivity
-        implements NavigationDrawerAdapter.NavigationDrawerAdapterDelegate {
+        implements NavigationDrawerAdapter.NavigationDrawerAdapterDelegate,
+                    ItemAdapter.DataSource, ItemAdapter.Delegate {
 
     private ItemAdapter itemAdapter;
     private ActionBarDrawerToggle drawerToggle;
@@ -41,6 +44,8 @@ public class BloclyActivity extends ActionBarActivity
         setSupportActionBar(toolbar);
 
         itemAdapter = new ItemAdapter();
+        itemAdapter.setDataSource(this);
+        itemAdapter.setDelegate(this);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv_activity_blocly);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -88,7 +93,6 @@ public class BloclyActivity extends ActionBarActivity
             public void onDrawerSlide(View drawerView, float slideOffset) {
                 super.onDrawerSlide(drawerView, slideOffset);
                 if (overflowButton == null) {
-                    // #8
                     ArrayList<View> foundViews = new ArrayList<View>();
                     getWindow().getDecorView().findViewsWithText(foundViews,
                             getString(R.string.abc_action_menu_overflow_description),
@@ -161,5 +165,41 @@ public class BloclyActivity extends ActionBarActivity
     public void didSelectFeed(NavigationDrawerAdapter adapter, RssFeed rssFeed) {
         drawerLayout.closeDrawers();
         Toast.makeText(this, "Show RSS items from " + rssFeed.getTitle(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public RssItem getRssItem(ItemAdapter itemAdapter, int position) {
+        return BloclyApplication.getSharedDataSource().getItems().get(position);
+    }
+
+    @Override
+    public RssFeed getRssFeed(ItemAdapter itemAdapter, int position) {
+        return BloclyApplication.getSharedDataSource().getFeeds().get(0);
+    }
+
+    @Override
+    public int getItemCount(ItemAdapter itemAdapter) {
+        return BloclyApplication.getSharedDataSource().getItems().size();
+    }
+
+    @Override
+    public void onItemClicked(ItemAdapter itemAdapter, RssItem rssItem) {
+        int positionToExpand = -1;
+        int positionToContract = -1;
+        if (itemAdapter.getExpandedItem() != null) {
+            positionToContract = BloclyApplication.getSharedDataSource().getItems().indexOf(itemAdapter.getExpandedItem());
+        }
+        if (itemAdapter.getExpandedItem() != rssItem) {
+            positionToExpand = BloclyApplication.getSharedDataSource().getItems().indexOf(rssItem);
+            itemAdapter.setExpandedItem(rssItem);
+        } else {
+            itemAdapter.setExpandedItem(null);
+        }
+        if (positionToContract > -1) {
+            itemAdapter.notifyItemChanged(positionToContract);
+        }
+        if (positionToExpand > -1) {
+            itemAdapter.notifyItemChanged(positionToExpand);
+        }
     }
 }
