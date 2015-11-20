@@ -2,6 +2,7 @@ package com.example.peter.blocly.ui.activity;
 
 import android.animation.ValueAnimator;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -13,6 +14,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +29,7 @@ import com.example.peter.blocly.ui.adapter.ItemAdapter;
 import com.example.peter.blocly.ui.adapter.NavigationDrawerAdapter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BloclyActivity extends ActionBarActivity
         implements NavigationDrawerAdapter.NavigationDrawerAdapterDelegate,
@@ -59,7 +62,31 @@ public class BloclyActivity extends ActionBarActivity
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         drawerLayout = (DrawerLayout) findViewById(R.id.dl_activity_blocly);
+////////////////
 
+        List<ResolveInfo> appList;
+
+        Intent webpage = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.google.com"));
+        appList = getPackageManager().queryIntentActivities(webpage, 0);
+        for (ResolveInfo info : appList) {
+            Log.v("THE LIST", info.toString());
+        }
+        Intent phonecall = new Intent(Intent.ACTION_CALL, Uri.parse("tel:6507872575"));
+        appList = getPackageManager().queryIntentActivities(phonecall, 0);
+        for (ResolveInfo info : appList) {
+            Log.v("THE LIST", info.toString());
+        }
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.setType("text/plain");
+        email.putExtra(Intent.EXTRA_EMAIL, "emailaddress@emailaddress.com");
+        email.putExtra(Intent.EXTRA_SUBJECT, "Subject");
+        email.putExtra(Intent.EXTRA_TEXT, "I'm email body.");
+        appList = getPackageManager().queryIntentActivities(email, 0);
+        for (ResolveInfo info : appList) {
+            Log.v("THE LIST", info.toString());
+        }
+
+/////////////
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, 0,0) {
             @Override
             public void onDrawerClosed(View drawerView) {
