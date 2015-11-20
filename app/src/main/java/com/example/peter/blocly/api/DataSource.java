@@ -4,6 +4,7 @@ import com.example.peter.blocly.BloclyApplication;
 import com.example.peter.blocly.R;
 import com.example.peter.blocly.api.model.RssFeed;
 import com.example.peter.blocly.api.model.RssItem;
+import com.example.peter.blocly.api.network.GetFeedsNetworkRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,13 @@ public class DataSource {
         feeds = new ArrayList<RssFeed>();
         items = new ArrayList<RssItem>();
         createFakeData();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                new GetFeedsNetworkRequest("http://spendyourleapsecondhere.com/").performRequest();
+            }
+        }).start();
     }
 
     public List<RssFeed> getFeeds() {
