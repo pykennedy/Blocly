@@ -1,5 +1,7 @@
 package com.example.peter.blocly.api;
 
+import android.util.Log;
+
 import com.example.peter.blocly.BloclyApplication;
 import com.example.peter.blocly.R;
 import com.example.peter.blocly.api.model.RssFeed;
@@ -25,6 +27,13 @@ public class DataSource {
                 new GetFeedsNetworkRequest("http://spendyourleapsecondhere.com/").performRequest();
             }
         }).start();
+        Log.v("Number of items: ", Integer.toString(feeds.size()));
+        for (RssFeed rfItems : feeds) {
+            Log.v("The Title: ", rfItems.getTitle());
+        }
+        for (RssFeed rfItems : feeds) {
+            Log.v("The URL: ", rfItems.getSiteUrl());
+        }
     }
 
     public List<RssFeed> getFeeds() {
