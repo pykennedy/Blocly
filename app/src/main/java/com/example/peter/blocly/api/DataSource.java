@@ -1,9 +1,15 @@
 package com.example.peter.blocly.api;
 
+import android.database.sqlite.SQLiteDatabase;
+
 import com.example.peter.blocly.BloclyApplication;
+import com.example.peter.blocly.BuildConfig;
 import com.example.peter.blocly.R;
 import com.example.peter.blocly.api.model.RssFeed;
 import com.example.peter.blocly.api.model.RssItem;
+import com.example.peter.blocly.api.model.database.DatabaseOpenHelper;
+import com.example.peter.blocly.api.model.database.table.RssFeedTable;
+import com.example.peter.blocly.api.model.database.table.RssItemTable;
 import com.example.peter.blocly.api.network.GetFeedsNetworkRequest;
 
 import java.util.ArrayList;
@@ -11,10 +17,18 @@ import java.util.List;
 
 public class DataSource {
 
+    private DatabaseOpenHelper databaseOpenHelper;
+    private RssFeedTable rssFeedTable;
+    private RssItemTable rssItemTable;
     private List<RssFeed> feeds;
     private List<RssItem> items;
 
     public DataSource() {
+        rssFeedTable = new RssFeedTable();
+        rssItemTable = new RssItemTable();
+        databaseOpenHelper = new DatabaseOpenHelper(BloclyApplication.getSharedInstance(),
+                rssFeedTable, rssItemTable);
+
         feeds = new ArrayList<RssFeed>();
         items = new ArrayList<RssItem>();
         createFakeData();
@@ -22,6 +36,11 @@ public class DataSource {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                if (BuildConfig.DEBUG && false) {
+                    BloclyApplication.getSharedInstance().deleteDatabase("blocly_db");
+                }
+                SQLiteDatabase writableDatabase = databaseOpenHelper.getWritableDatabase();
+
                 new GetFeedsNetworkRequest("http://spendyourleapsecondhere.com/").performRequest();
             }
         }).start();
