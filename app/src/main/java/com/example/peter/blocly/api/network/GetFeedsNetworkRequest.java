@@ -1,5 +1,8 @@
 package com.example.peter.blocly.api.network;
 
+import com.example.peter.blocly.api.model.RssFeed;
+import com.example.peter.blocly.api.model.RssItem;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -38,6 +41,7 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
     @Override
     public List<FeedResponse> performRequest() {
         List<FeedResponse> responseFeeds = new ArrayList<FeedResponse>(feedUrls.length);
+        List<RssFeed> rssFeedFeeds = new ArrayList<RssFeed>(feedUrls.length);
         for (String feedUrlString : feedUrls) {
             InputStream inputStream = openStream(feedUrlString);
             if (inputStream == null) {
@@ -53,6 +57,7 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
 
                 NodeList allItemNodes = xmlDocument.getElementsByTagName(XML_TAG_ITEM);
                 List<ItemResponse> responseItems = new ArrayList<ItemResponse>(allItemNodes.getLength());
+                List<RssItem> rssItemItems = new ArrayList<RssItem>(feedUrls.length);
                 for (int itemIndex = 0; itemIndex < allItemNodes.getLength(); itemIndex++) {
                     String itemURL = null;
                     String itemTitle = null;
