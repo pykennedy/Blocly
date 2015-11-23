@@ -2,10 +2,17 @@ package com.example.peter.blocly.api.network;
 
 import android.util.Log;
 
-import java.io.BufferedReader;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class GetFeedsNetworkRequest extends NetworkRequest {
 
@@ -23,18 +30,40 @@ public class GetFeedsNetworkRequest extends NetworkRequest {
                 return null;
             }
             try {
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String line = bufferedReader.readLine();
-                while (line != null) {
-                    Log.v(getClass().getSimpleName(), "Line: " + line);
-                    line = bufferedReader.readLine();
+                DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+                Document xmlDocument = documentBuilder.parse(inputStream);
+                NodeList allItemNodes = xmlDocument.getElementsByTagName("item");
+                Log.v("# OF ITEMS: ", Integer.toString(allItemNodes.getLength()));
+                for (int itemIndex = 0; itemIndex < allItemNodes.getLength(); itemIndex++) {
+                    Node itemNode = allItemNodes.item(itemIndex);
+                    NodeList tagNodes = itemNode.getChildNodes();
+                    for (int tagIndex = 0; tagIndex < tagNodes.getLength(); tagIndex++) {
+                        Node tagNode = tagNodes.item(tagIndex);
+                        String tag = tagNode.getNodeName();
+                        if ("link".equalsIgnoreCase(tag)) {
+                            Log.v("ITEM URL: ", tagNode.getTextContent());
+                        } else if ("title".equalsIgnoreCase(tag)) {
+                            Log.v("ITEM TITLE: ", tagNode.getTextContent());
+                        }
+                    }
                 }
-                bufferedReader.close();
             } catch (IOException e) {
                 e.printStackTrace();
                 setErrorCode(ERROR_IO);
                 return null;
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();
+            } catch (SAXException e) {
+                e.printStackTrace();
             }
+        }
+        return null;
+    }
+
+    private String optFirstTagFromDocument(Document document, String tagName) {
+        NodeList elementsByTagName = document.getElementsByTagName(tagName);
+        if (elementsByTagName.getLength() > 0) {
+            return elementsByTagName.item(0).getTextContent();
         }
         return null;
     }
