@@ -1,5 +1,7 @@
 package com.example.peter.blocly.api.model;
 
+import android.content.ContentValues;
+
 public class RssFeed {
     private String title;
     private String description;
@@ -27,5 +29,18 @@ public class RssFeed {
 
     public String getFeedUrl() {
         return feedUrl;
+    }
+
+    public ContentValues getContent() {
+        /*    private static final String COLUMN_LINK = "link";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_DESCRIPTION = "description";
+    private static final String COLUMN_FEED_URL = "feed_url";
+    */
+        ContentValues contentValues = new ContentValues();
+        //contentValues.put;
+
+
+        return contentValues;
     }
 }
