@@ -17,12 +17,24 @@ public class DataSource {
     public DataSource() {
         feeds = new ArrayList<RssFeed>();
         items = new ArrayList<RssItem>();
-        createFakeData();
+        //createFakeData();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                new GetFeedsNetworkRequest("http://spendyourleapsecondhere.com/").performRequest();
+                List<GetFeedsNetworkRequest.FeedResponse> feedResponseList = new GetFeedsNetworkRequest("http://www.npr.org/rss/rss.php?id=1001").performRequest();
+
+                for (GetFeedsNetworkRequest.FeedResponse response : feedResponseList) {
+                    RssFeed currentFeed = new RssFeed(response.channelTitle, response.channelDescription,
+                            response.channelURL, response.channelFeedURL);
+                    feeds.add(currentFeed);
+                    for(GetFeedsNetworkRequest.ItemResponse itemResponse : response.channelItems) {
+                        RssItem currentItem = new RssItem(itemResponse.itemGUID, itemResponse.itemTitle,
+                                itemResponse.itemDescription, itemResponse.itemURL, itemResponse.itemEnclosureURL,
+                                0, 0, false, false);
+                        items.add(currentItem);
+                    }
+                }
             }
         }).start();
     }
