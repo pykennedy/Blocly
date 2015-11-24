@@ -12,8 +12,12 @@ import com.example.peter.blocly.api.model.database.table.RssFeedTable;
 import com.example.peter.blocly.api.model.database.table.RssItemTable;
 import com.example.peter.blocly.api.network.GetFeedsNetworkRequest;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DataSource {
 
@@ -36,12 +40,39 @@ public class DataSource {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (BuildConfig.DEBUG && false) {
+                if (BuildConfig.DEBUG && true) {
                     BloclyApplication.getSharedInstance().deleteDatabase("blocly_db");
                 }
                 SQLiteDatabase writableDatabase = databaseOpenHelper.getWritableDatabase();
 
-                new GetFeedsNetworkRequest("http://spendyourleapsecondhere.com/").performRequest();
+                List<GetFeedsNetworkRequest.FeedResponse> feedResponses =
+                        new GetFeedsNetworkRequest("http://www.npr.org/rss/rss.php?id=1001").performRequest();
+                GetFeedsNetworkRequest.FeedResponse androidCentral = feedResponses.get(0);
+                long androidCentralFeedId = new RssFeedTable.Builder()
+                        .setFeedURL(androidCentral.channelFeedURL)
+                        .setSiteURL(androidCentral.channelURL)
+                        .setTitle(androidCentral.channelTitle)
+                        .setDescription(androidCentral.channelDescription)
+                        .insert(writableDatabase);
+                for (GetFeedsNetworkRequest.ItemResponse itemResponse : androidCentral.channelItems) {
+                    long itemPubDate = System.currentTimeMillis();
+                    DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss z", Locale.ENGLISH);
+                    try {
+                        itemPubDate = dateFormat.parse(itemResponse.itemPubDate).getTime();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    new RssItemTable.Builder()
+                            .setTitle(itemResponse.itemTitle)
+                            .setDescription(itemResponse.itemDescription)
+                            .setEnclosure(itemResponse.itemEnclosureURL)
+                            .setMIMEType(itemResponse.itemEnclosureMIMEType)
+                            .setLink(itemResponse.itemURL)
+                            .setGUID(itemResponse.itemGUID)
+                            .setPubDate(itemPubDate)
+                            .setRSSFeed(androidCentralFeedId)
+                            .insert(writableDatabase);
+                }
             }
         }).start();
     }
@@ -57,12 +88,12 @@ public class DataSource {
     void createFakeData() {
         feeds.add(new RssFeed("My Favorite Feed",
                 "This feed is just incredible, I can't even begin to tell you…",
-                "http://favoritefeed.net", "http://feeds.feedburner.com/favorite_feed?format=xml"));
+                "http://favoritefeed.net", "http://www.npr.org/rss/rss.php?id=1001"));
         for (int i = 0; i < 10; i++) {
             items.add(new RssItem(String.valueOf(i),
                     BloclyApplication.getSharedInstance().getString(R.string.placeholder_headline) + " " + i,
                     BloclyApplication.getSharedInstance().getString(R.string.placeholder_content),
-                    "http://spendyourleapsecondhere.com/",
+                    "http://www.npr.org/rss/rss.php?id=1001",
                     "https://i.ytimg.com/vi/pbS--riCP8w/hqdefault.jpg",
                     0, System.currentTimeMillis(), false, false));
         }
