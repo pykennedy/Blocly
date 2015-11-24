@@ -12,8 +12,12 @@ import com.example.peter.blocly.api.model.database.table.RssFeedTable;
 import com.example.peter.blocly.api.model.database.table.RssItemTable;
 import com.example.peter.blocly.api.network.GetFeedsNetworkRequest;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class DataSource {
 
@@ -31,30 +35,44 @@ public class DataSource {
 
         feeds = new ArrayList<RssFeed>();
         items = new ArrayList<RssItem>();
-        //createFakeData();
+        createFakeData();
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (BuildConfig.DEBUG && false) {
+                if (BuildConfig.DEBUG && true) {
                     BloclyApplication.getSharedInstance().deleteDatabase("blocly_db");
                 }
                 SQLiteDatabase writableDatabase = databaseOpenHelper.getWritableDatabase();
 
-                List<GetFeedsNetworkRequest.FeedResponse> feedResponseList = new GetFeedsNetworkRequest("http://www.npr.org/rss/rss.php?id=1001").performRequest();
-
-                for (GetFeedsNetworkRequest.FeedResponse response : feedResponseList) {
-                    RssFeed currentFeed = new RssFeed(response.channelTitle, response.channelDescription,
-                            response.channelURL, response.channelFeedURL);
-                    feeds.add(currentFeed);
-                    for(GetFeedsNetworkRequest.ItemResponse itemResponse : response.channelItems) {
-                        RssItem currentItem = new RssItem(itemResponse.itemGUID, itemResponse.itemTitle,
-                                itemResponse.itemDescription, itemResponse.itemURL, itemResponse.itemEnclosureURL,
-                                0, 0, false, false);
-                        items.add(currentItem);
+                List<GetFeedsNetworkRequest.FeedResponse> feedResponses =
+                        new GetFeedsNetworkRequest("http://www.npr.org/rss/rss.php?id=1001").performRequest();
+                GetFeedsNetworkRequest.FeedResponse androidCentral = feedResponses.get(0);
+                long androidCentralFeedId = new RssFeedTable.Builder()
+                        .setFeedURL(androidCentral.channelFeedURL)
+                        .setSiteURL(androidCentral.channelURL)
+                        .setTitle(androidCentral.channelTitle)
+                        .setDescription(androidCentral.channelDescription)
+                        .insert(writableDatabase);
+                for (GetFeedsNetworkRequest.ItemResponse itemResponse : androidCentral.channelItems) {
+                    long itemPubDate = System.currentTimeMillis();
+                    DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss z", Locale.ENGLISH);
+                    try {
+                        itemPubDate = dateFormat.parse(itemResponse.itemPubDate).getTime();
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                     }
+                    new RssItemTable.Builder()
+                            .setTitle(itemResponse.itemTitle)
+                            .setDescription(itemResponse.itemDescription)
+                            .setEnclosure(itemResponse.itemEnclosureURL)
+                            .setMIMEType(itemResponse.itemEnclosureMIMEType)
+                            .setLink(itemResponse.itemURL)
+                            .setGUID(itemResponse.itemGUID)
+                            .setPubDate(itemPubDate)
+                            .setRSSFeed(androidCentralFeedId)
+                            .insert(writableDatabase);
                 }
-
             }
         }).start();
     }

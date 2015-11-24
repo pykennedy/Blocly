@@ -4,6 +4,10 @@ import android.database.sqlite.SQLiteDatabase;
 
 public abstract class Table {
 
+    public static interface Builder {
+        public long insert(SQLiteDatabase writeableDB);
+    }
+
     protected static final String COLUMN_ID = "id";
 
     public abstract String getName();
