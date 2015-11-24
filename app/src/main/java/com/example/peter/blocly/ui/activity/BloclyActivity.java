@@ -27,6 +27,9 @@ import com.example.peter.blocly.R;
 import com.example.peter.blocly.api.DataSource;
 import com.example.peter.blocly.api.model.RssFeed;
 import com.example.peter.blocly.api.model.RssItem;
+import com.example.peter.blocly.api.model.database.DatabaseOpenHelper;
+import com.example.peter.blocly.api.model.database.table.RssFeedTable;
+import com.example.peter.blocly.api.model.database.table.RssItemTable;
 import com.example.peter.blocly.ui.adapter.ItemAdapter;
 import com.example.peter.blocly.ui.adapter.NavigationDrawerAdapter;
 
@@ -150,6 +153,13 @@ public class BloclyActivity extends ActionBarActivity
         navigationRecyclerView.setAdapter(navigationDrawerAdapter);
 
         registerReceiver(dataSourceBroadcastReceiver, new IntentFilter(DataSource.ACTION_DOWNLOAD_COMPLETED));
+
+        RssFeedTable rssFeedTable = new RssFeedTable();
+        RssItemTable rssItemTable = new RssItemTable();
+        DatabaseOpenHelper databaseOpenHelper = new DatabaseOpenHelper(BloclyApplication.getSharedInstance(),
+                rssFeedTable, rssItemTable);
+        databaseOpenHelper.getReadableDatabase().query(true, rssItemTable.getName(), null, null,
+                null, null, "pub_date ASC", "10", null);
     }
 
     @Override
