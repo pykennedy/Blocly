@@ -118,14 +118,18 @@ public class BloclyActivity extends ActionBarActivity
                                 @Override
                                 public void onSuccess(List<RssItem> rssItems) {
                                     if (!rssItems.isEmpty()) {
+                                        System.out.println("BAZINGA 4");
                                         currentItems.addAll(0, rssItems);
                                         itemAdapter.notifyItemRangeInserted(0, rssItems.size());
+                                        System.out.println("BAZINGA 5");
                                     }
+                                    System.out.println("BAZINGA 2");
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
 
                                 @Override
                                 public void onError(String errorMessage) {
+                                    System.out.println("BAZINGA3");
                                     swipeRefreshLayout.setRefreshing(false);
                                 }
                             });

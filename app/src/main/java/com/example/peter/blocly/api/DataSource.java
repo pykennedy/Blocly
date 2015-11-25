@@ -59,9 +59,13 @@ public class DataSource {
         submitTask(new Runnable() {
             @Override
             public void run() {
+                System.out.println("BAZINGA 2");
+                // IT GETS STUCK HERE???????????
                 GetFeedsNetworkRequest getFeedsNetworkRequest = new GetFeedsNetworkRequest(rssFeed.getFeedUrl());
+                System.out.println("BAZINGA 3");
                 final List<RssItem> newItems = new ArrayList<RssItem>();
                 List<GetFeedsNetworkRequest.FeedResponse> feedResponses = getFeedsNetworkRequest.performRequest();
+                System.out.println("BAZINGA 3");
                 if (getFeedsNetworkRequest.getErrorCode() != 0) {
                     final String errorMessage;
                     if (getFeedsNetworkRequest.getErrorCode() == NetworkRequest.ERROR_IO) {
@@ -82,6 +86,7 @@ public class DataSource {
                     return;
                 }
                 GetFeedsNetworkRequest.FeedResponse feedResponse = feedResponses.get(0);
+                System.out.println("BAZINGA 2");
                 for (GetFeedsNetworkRequest.ItemResponse itemResponse : feedResponse.channelItems) {
                     if (RssItemTable.contains(databaseOpenHelper.getReadableDatabase(), itemResponse.itemGUID)) {
                         continue;
@@ -119,6 +124,7 @@ public class DataSource {
                 callbackThreadHandler.post(new Runnable() {
                     @Override
                     public void run() {
+                        System.out.println("BAZINGA 7");
                         callback.onSuccess(newItems);
                     }
                 });

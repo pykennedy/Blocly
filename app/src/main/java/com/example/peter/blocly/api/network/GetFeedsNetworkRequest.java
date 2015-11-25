@@ -32,7 +32,9 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
     String [] feedUrls;
 
     public GetFeedsNetworkRequest(String... feedUrls) {
+        System.out.println("BAZINGA 2");
         this.feedUrls = feedUrls;
+        System.out.println("BAZINGA 2");
     }
 
     @Override
