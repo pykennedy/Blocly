@@ -98,6 +98,14 @@ public class RssItemTable extends Table {
                 null, null, COLUMN_PUB_DATE + " DESC", null);
     }
 
+    public static boolean contains(SQLiteDatabase readonlyDatabase, String guId) {
+        Cursor query = readonlyDatabase.query(true, NAME, new String[]{COLUMN_GUID}, COLUMN_GUID + " = ?", new String[]{guId},
+                null, null, null, null);
+        boolean contains = query.moveToFirst();
+        query.close();
+        return contains;
+    }
+
     private static final String NAME = "rss_items";
 
     private static final String COLUMN_LINK = "link";

@@ -46,6 +46,14 @@ public class BloclyActivity extends ActionBarActivity
     private View overflowButton;
     private List<RssFeed> allFeeds = new ArrayList<RssFeed>();
     private List<RssItem> currentItems = new ArrayList<RssItem>();
+    private boolean firstTime = true;
+
+    private boolean isFirstTime() {
+        return firstTime;
+    }
+    private void setFirstTime(boolean newTime) {
+        firstTime = newTime;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,40 +72,65 @@ public class BloclyActivity extends ActionBarActivity
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                BloclyApplication.getSharedDataSource().fetchNewFeed("http://www.npr.org/rss/rss.php?id=1001   ",
-                        new DataSource.Callback<RssFeed>() {
-                            @Override
-                            public void onSuccess(RssFeed rssFeed) {
-                                if (isFinishing() || isDestroyed()) {
-                                    return;
-                                }
-                                allFeeds.add(rssFeed);
-                                navigationDrawerAdapter.notifyDataSetChanged();
-                                BloclyApplication.getSharedDataSource().fetchItemsForFeed(rssFeed,
-                                        new DataSource.Callback<List<RssItem>>() {
-                                            @Override
-                                            public void onSuccess(List<RssItem> rssItems) {
-                                                if (isFinishing() || isDestroyed()) {
-                                                    return;
+                if(isFirstTime()) {
+                    setFirstTime(false);
+                    ///////////////////////
+                    BloclyApplication.getSharedDataSource().fetchNewFeed("http://www.npr.org/rss/rss.php?id=1001",
+                            new DataSource.Callback<RssFeed>() {
+                                @Override
+                                public void onSuccess(RssFeed rssFeed) {
+                                    if (isFinishing() || isDestroyed()) {
+                                        return;
+                                    }
+                                    allFeeds.add(rssFeed);
+                                    navigationDrawerAdapter.notifyDataSetChanged();
+                                    BloclyApplication.getSharedDataSource().fetchItemsForFeed(rssFeed,
+                                            new DataSource.Callback<List<RssItem>>() {
+                                                @Override
+                                                public void onSuccess(List<RssItem> rssItems) {
+                                                    if (isFinishing() || isDestroyed()) {
+                                                        return;
+                                                    }
+                                                    currentItems.addAll(rssItems);
+                                                    itemAdapter.notifyItemRangeInserted(0, currentItems.size());
+                                                    swipeRefreshLayout.setRefreshing(false);
                                                 }
-                                                currentItems.addAll(rssItems);
-                                                itemAdapter.notifyItemRangeInserted(0, currentItems.size());
-                                                swipeRefreshLayout.setRefreshing(false);
-                                            }
 
-                                            @Override
-                                            public void onError(String errorMessage) {
-                                                swipeRefreshLayout.setRefreshing(false);
-                                            }
-                                        });
-                            }
+                                                @Override
+                                                public void onError(String errorMessage) {
+                                                    swipeRefreshLayout.setRefreshing(false);
+                                                }
+                                            });
+                                }
 
-                            @Override
-                            public void onError(String errorMessage) {
-                                Toast.makeText(BloclyActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                        });
+                                @Override
+                                public void onError(String errorMessage) {
+                                    Toast.makeText(BloclyActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+                    //////////////////////////////////
+                } else {
+                    ///////////////////////
+                    System.out.println("BAZINGA");
+                    BloclyApplication.getSharedDataSource().refreshFeed(BloclyApplication.getSharedDataSource().getCurrentFeed("http://www.npr.org/rss/rss.php?id=1001"),
+                            new DataSource.Callback<List<RssItem>>() {
+                                @Override
+                                public void onSuccess(List<RssItem> rssItems) {
+                                    if (!rssItems.isEmpty()) {
+                                        currentItems.addAll(0, rssItems);
+                                        itemAdapter.notifyItemRangeInserted(0, rssItems.size());
+                                    }
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+
+                                @Override
+                                public void onError(String errorMessage) {
+                                    swipeRefreshLayout.setRefreshing(false);
+                                }
+                            });
+                    //////////////////////////////////
+                }
             }
         });
 
