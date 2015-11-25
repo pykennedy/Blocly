@@ -147,7 +147,6 @@ public class DataSource {
                 {
                     final RssFeed fetchedFeed = feedFromCursor(existingFeedCursor);
                     existingFeedCursor.close();
-                    tempRssFeed = fetchedFeed;
                     callbackThreadHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -214,6 +213,7 @@ public class DataSource {
                 Cursor newFeedCursor = rssFeedTable.fetchRow(databaseOpenHelper.getReadableDatabase(), newFeedId);
                 newFeedCursor.moveToFirst();
                 final RssFeed fetchedFeed = feedFromCursor(newFeedCursor);
+                tempRssFeed = fetchedFeed;
                 newFeedCursor.close();
                 callbackThreadHandler.post(new Runnable() {
                     @Override
