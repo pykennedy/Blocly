@@ -25,6 +25,7 @@ import com.example.peter.blocly.api.DataSource;
 import com.example.peter.blocly.api.model.RssFeed;
 import com.example.peter.blocly.api.model.RssItem;
 import com.example.peter.blocly.ui.adapter.NavigationDrawerAdapter;
+import com.example.peter.blocly.ui.fragment.RssItemDetailFragment;
 import com.example.peter.blocly.ui.fragment.RssItemListFragment;
 
 import java.util.ArrayList;
@@ -41,11 +42,14 @@ public class BloclyActivity extends ActionBarActivity
     private View overflowButton;
     private List<RssFeed> allFeeds = new ArrayList<RssFeed>();
     private RssItem expandedItem = null;
+    private boolean onTablet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blocly);
+
+        onTablet = findViewById(R.id.fl_activity_blocly_right_pane) != null;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tb_activity_blocly);
         setSupportActionBar(toolbar);
@@ -210,6 +214,13 @@ public class BloclyActivity extends ActionBarActivity
     @Override
     public void onItemExpanded(RssItemListFragment rssItemListFragment, RssItem rssItem) {
         expandedItem = rssItem;
+        if (onTablet) {
+            getFragmentManager().beginTransaction()
+                    .replace(R.id.fl_activity_blocly_right_pane, RssItemDetailFragment.detailFragmentForRssItem(rssItem))
+                    .commit();
+
+            return;
+        }
         animateShareItem(expandedItem != null);
     }
 
