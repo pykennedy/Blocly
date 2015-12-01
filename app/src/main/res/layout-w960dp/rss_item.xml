@@ -5,7 +5,7 @@
     android:padding="16dp"
     android:background="@drawable/list_selector">
 
-    <io.bloc.android.blocly.ui.widget.RobotoTextView
+    <com.example.peter.blocly.ui.widget.RobotoTextView
         style="@style/Headline"
         android:id="@+id/tv_rss_item_callout"
         android:layout_width="40dp"
@@ -16,7 +16,7 @@
         android:gravity="center"
         android:background="@android:color/black"/>
 
-    <io.bloc.android.blocly.ui.widget.RobotoTextView
+    <com.example.peter.blocly.ui.widget.RobotoTextView
         style="@style/RssItemTitle"
         android:id="@+id/tv_rss_item_title"
         android:layout_width="match_parent"
@@ -24,7 +24,7 @@
         android:layout_toRightOf="@+id/tv_rss_item_callout"
         android:text="New York Attacked By Giant Squid"/>
 
-    <io.bloc.android.blocly.ui.widget.RobotoTextView
+    <com.example.peter.blocly.ui.widget.RobotoTextView
         style="@style/Body1"
         android:id="@+id/tv_rss_item_content"
         android:layout_width="match_parent"
