@@ -149,9 +149,15 @@ public class GetFeedsNetworkRequest extends NetworkRequest<List<GetFeedsNetworkR
 
     static String parseImageFromHTML(String htmlString) {
         org.jsoup.nodes.Document document = Jsoup.parse(htmlString);
-        Elements imgElements = document.select("img");
-        if (imgElements.isEmpty()) {
-            return null;
+        Elements imgElements;
+        imgElements = document.select("video[href*=youtube]");
+        if(imgElements.isEmpty()) {
+            imgElements = document.select("img");
+            if (imgElements.isEmpty())
+                return null;
+        } else {
+            imgElements = document.select("img[href$=here>/1.jpg]");
+            return imgElements.attr("src");
         }
         return imgElements.attr("src");
     }
