@@ -138,7 +138,8 @@ public class BloclyActivity extends ActionBarActivity
                 navigationDrawerAdapter.notifyDataSetChanged();
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .add(R.id.fl_activity_blocly, RssItemListFragment.fragmentForRssFeed(rssFeeds.get(0)))
+                        .add(R.id.fl_activity_blocly, RssItemListFragment.fragmentForRssFeed(rssFeeds.get(0)),
+                                rssFeeds.get(0).getTitle())
                         .commit();
             }
 
@@ -199,6 +200,25 @@ public class BloclyActivity extends ActionBarActivity
     @Override
     public void didSelectFeed(NavigationDrawerAdapter adapter, RssFeed rssFeed) {
         drawerLayout.closeDrawers();
+    //////////////// my code
+        // if feed already loaded
+        if(getSupportFragmentManager().findFragmentByTag(rssFeed.getTitle()) != null) {
+            navigationDrawerAdapter.notifyDataSetChanged();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .show(getSupportFragmentManager().findFragmentByTag(rssFeed.getTitle()))
+                    .commit();
+        } else {
+            RssItemListFragment rssFeedFrag = RssItemListFragment.fragmentForRssFeed(rssFeed);
+            navigationDrawerAdapter.notifyDataSetChanged();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.fl_activity_blocly, rssFeedFrag, rssFeed.getTitle())
+                    .show(rssFeedFrag)
+                    .commit();
+
+        }
+    ///////////////
         Toast.makeText(this, "Show RSS items from " + rssFeed.getTitle(), Toast.LENGTH_SHORT).show();
     }
 
