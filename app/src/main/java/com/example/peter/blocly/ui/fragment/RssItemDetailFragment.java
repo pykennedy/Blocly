@@ -1,10 +1,13 @@
 package com.example.peter.blocly.ui.fragment;
 
+import android.app.Fragment;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -24,6 +27,8 @@ public class RssItemDetailFragment extends Fragment implements ImageLoadingListe
 
     private static final String BUNDLE_EXTRA_RSS_ITEM = RssItemDetailFragment.class.getCanonicalName().concat(".EXTRA_RSS_ITEM");
 
+    private Menu menu;
+
     public static RssItemDetailFragment detailFragmentForRssItem(RssItem rssItem) {
         Bundle arguments = new Bundle();
         arguments.putLong(BUNDLE_EXTRA_RSS_ITEM, rssItem.getRowId());
@@ -39,6 +44,7 @@ public class RssItemDetailFragment extends Fragment implements ImageLoadingListe
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        System.out.println("GOT HERE AT THE START");
         super.onCreate(savedInstanceState);
 
         Bundle arguments = getArguments();
@@ -59,16 +65,40 @@ public class RssItemDetailFragment extends Fragment implements ImageLoadingListe
                 public void onError(String errorMessage) {}
             });
         }
+
+        setHasOptionsMenu(true);
+
+
+/*
+
+        */
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.item_detail_menu, menu);
+        this.menu = menu;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return true;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View inflate = inflater.inflate(R.layout.fragment_rss_item_detail, container, false);
+
+        //this.menu = (Menu) inflate.(R.menu.item_detail_menu)
+
         headerImage = (ImageView) inflate.findViewById(R.id.iv_fragment_rss_item_detail_header);
         progressBar = (ProgressBar) inflate.findViewById(R.id.pb_fragment_rss_item_detail_header);
         title = (TextView) inflate.findViewById(R.id.tv_fragment_rss_item_detail_title);
         content = (TextView) inflate.findViewById(R.id.tv_fragment_rss_item_detail_content);
+        setHasOptionsMenu(true);
         return inflate;
     }
 

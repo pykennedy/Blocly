@@ -189,6 +189,7 @@ public class BloclyActivity extends ActionBarActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.blocly, menu);
+
         this.menu = menu;
         animateShareItem(expandedItem != null);
         return super.onCreateOptionsMenu(menu);
