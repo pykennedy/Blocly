@@ -214,6 +214,7 @@ public class BloclyActivity extends ActionBarActivity
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.fl_activity_blocly, rssFeedFrag, rssFeed.getTitle())
+                    .addToBackStack("BACKSTACK")
                     .show(rssFeedFrag)
                     .commit();
 
