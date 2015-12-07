@@ -317,4 +317,6 @@ public class DataSource {
                 .setRSSFeed(feedId)
                 .insert(databaseOpenHelper.getWritableDatabase());
     }
+
+    // make method to update rssItem to new values
 }

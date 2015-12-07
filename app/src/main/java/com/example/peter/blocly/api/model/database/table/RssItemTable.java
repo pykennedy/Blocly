@@ -50,6 +50,10 @@ public class RssItemTable extends Table {
             return this;
         }
 
+        public void update(long id, SQLiteDatabase writeableDatabase) {
+            //
+        }
+
         @Override
         public long insert(SQLiteDatabase writableDB) {
             return writableDB.insert(RssItemTable.NAME, null, values);

@@ -43,6 +43,11 @@ public class RssItemListFragment extends Fragment implements ItemAdapter.DataSou
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
+
+    public RecyclerView getRecyclerView() {
+        return recyclerView;
+    }
+
     private ItemAdapter itemAdapter;
 
     private RssFeed currentFeed;
@@ -175,5 +180,9 @@ public class RssItemListFragment extends Fragment implements ItemAdapter.DataSou
     @Override
     public void onVisitClicked(ItemAdapter itemAdapter, RssItem rssItem) {
         delegate.get().onItemVisitClicked(this, rssItem);
+    }
+
+    public void starIsChecked(ItemAdapter itemAdapter, RssItem rssItem, boolean checked) {
+        //
     }
 }
