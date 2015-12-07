@@ -32,4 +32,18 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
         }
         assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
     }
+
+    public void testStarWorks() throws Exception {
+        setActivityInitialTouchMode(true);
+        BloclyActivity activity = getActivity();
+        FragmentManager fragMan = activity.getSupportFragmentManager();
+        RssItemListFragment listFragment =
+                (RssItemListFragment) fragMan.findFragmentById(R.id.fl_activity_blocly);
+        RecyclerView recyclerView = listFragment.getRecyclerView();
+        while(recyclerView.getAdapter().getItemCount() == 0) {
+            Thread.sleep(1000);
+        }
+        onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
+        //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
+    }
 }
