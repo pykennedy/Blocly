@@ -1,7 +1,9 @@
 package com.example.peter.blocly.ui.fragment;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
@@ -44,6 +46,7 @@ public class RssItemDetailFragment extends Fragment implements ImageLoadingListe
     TextView title;
     TextView content;
     ProgressBar progressBar;
+    BloclyActivity activity;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,18 +56,27 @@ public class RssItemDetailFragment extends Fragment implements ImageLoadingListe
 
         if(isFirstTimeLoading) {
             isFirstTimeLoading = false;
-            BloclyActivity activity = (BloclyActivity) this.getActivity();
+            activity = (BloclyActivity) this.getActivity();
             Toolbar toolbar = (Toolbar) activity.findViewById(R.id.tb_item_detail_box);
             toolbar.inflateMenu(R.menu.item_detail_menu);
 
-            toolbar.setOnClickListener(new View.OnClickListener() {
+            toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
                 @Override
-                public void onClick(View v) {
-                    if(v.getId() == R.id.item_menu_visit_page) {
-                        System.out.println("BIG BUTS CAN'T LIE");
+                public boolean onMenuItemClick(MenuItem item) {
+                    if(item.getItemId() == R.id.item_menu_visit_page) {
+                        Intent visitIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(activity.getExpandedItem().getUrl()));
+                        startActivity(visitIntent);
                     }
-                    else
-                        System.out.println("god dam");
+                    else if(item.getItemId() == R.id.item_menu_share) {
+                        RssItem itemToShare = activity.getExpandedItem();
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                                String.format("%s (%s)", itemToShare.getTitle(), itemToShare.getUrl()));
+                        shareIntent.setType("text/plain");
+                        Intent chooser = Intent.createChooser(shareIntent, getString(R.string.share_chooser_title));
+                        startActivity(chooser);
+                    }
+                    return true;
                 }
             });
         }

@@ -257,4 +257,7 @@ public class BloclyActivity extends ActionBarActivity
         });
         valueAnimator.start();
     }
+    public RssItem getExpandedItem() {
+        return expandedItem;
+    }
 }
