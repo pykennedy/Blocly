@@ -33,7 +33,7 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
     }
 
     public void testStarWorks() throws Exception {
-        setActivityInitialTouchMode(true);
+        //setActivityInitialTouchMode(true);
         BloclyActivity activity = getActivity();
         FragmentManager fragMan = activity.getSupportFragmentManager();
         RssItemListFragment listFragment =
@@ -44,5 +44,6 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
         }
         //onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
         //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
+        assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
     }
 }
