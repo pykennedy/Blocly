@@ -50,6 +50,7 @@ public class RssItemDetailFragment extends Fragment implements ImageLoadingListe
         System.out.println("GOT HERE AT THE START");
         super.onCreate(savedInstanceState);
 
+
         if(isFirstTimeLoading) {
             isFirstTimeLoading = false;
             BloclyActivity activity = (BloclyActivity) this.getActivity();
