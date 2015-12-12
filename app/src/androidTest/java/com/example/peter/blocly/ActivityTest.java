@@ -26,13 +26,12 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
         RssItemListFragment listFragment =
                 (RssItemListFragment) fragMan.findFragmentById(R.id.fl_activity_blocly);
         RecyclerView recyclerView = listFragment.getRecyclerView();
-        activity.getNavDrawAdap().notifyDataSetChanged();
         while(recyclerView.getAdapter().getItemCount() == 0) {
                 Thread.sleep(1000);
         }
         assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
     }
-/*
+
     public void testStarWorks() throws Exception {
         setActivityInitialTouchMode(true);
         BloclyActivity activity = getActivity();
@@ -40,14 +39,13 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
         RssItemListFragment listFragment =
                 (RssItemListFragment) fragMan.findFragmentById(R.id.fl_activity_blocly);
         RecyclerView recyclerView = listFragment.getRecyclerView();
-        activity.getNavDrawAdap().notifyDataSetChanged();
         while(recyclerView.getAdapter().getItemCount() == 0) {
             Thread.sleep(1000);
         }
         //onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
         //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
 
-        // just throwing this in here to have something for this test to return
+        // just throwing this in here to have something for this test to run
         assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
-    } */
+    }
 }
