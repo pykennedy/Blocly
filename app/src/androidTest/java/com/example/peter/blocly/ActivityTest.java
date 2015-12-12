@@ -33,7 +33,7 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
     }
 
     public void testStarWorks() throws Exception {
-        //setActivityInitialTouchMode(true);
+        setActivityInitialTouchMode(true);
         BloclyActivity activity = getActivity();
         FragmentManager fragMan = activity.getSupportFragmentManager();
         RssItemListFragment listFragment =
