@@ -45,6 +45,10 @@ public class BloclyActivity extends ActionBarActivity
     private RssItem expandedItem = null;
     private boolean onTablet;
 
+    public NavigationDrawerAdapter getNavDrawAdap() {
+        return navigationDrawerAdapter;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Debug.startMethodTracing("BloclyActivity");
