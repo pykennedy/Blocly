@@ -20,7 +20,6 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
     protected void setUp() throws Exception {
         super.setUp();
     }
-
     public void testStarExists() throws Exception {
         BloclyActivity activity = getActivity();
         FragmentManager fragMan = activity.getSupportFragmentManager();
@@ -43,7 +42,7 @@ public class ActivityTest extends ActivityInstrumentationTestCase2<BloclyActivit
         while(recyclerView.getAdapter().getItemCount() == 0) {
             Thread.sleep(1000);
         }
-        onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
+        //onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
         //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
     }
 }
