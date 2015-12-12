@@ -20,7 +20,7 @@
         app:showAsAction="always"/>
 
     <item android:id="@+id/item_menu_share"
-        android:icon="@drawable/ic_share_selector"
+        android:icon="@drawable/item_detail_share"
         android:title="@string/item_menu_share"
         android:orderInCategory="3"
         app:showAsAction="always"/>
