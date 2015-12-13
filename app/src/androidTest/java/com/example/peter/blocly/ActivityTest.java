@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.test.SingleLaunchActivityTestCase;
 
+import com.example.peter.blocly.api.model.RssItem;
 import com.example.peter.blocly.ui.activity.BloclyActivity;
 import com.example.peter.blocly.ui.fragment.RssItemListFragment;
 
@@ -43,18 +44,29 @@ public class ActivityTest extends SingleLaunchActivityTestCase<BloclyActivity> {
         // throws error, keep for testing
         //assertNotNull(recyclerView.findViewById(R.id.dl_activity_blocly));
     }
-/*
+
     public void testStarWorks() throws Exception {
         FragmentManager fragMan = activity.getSupportFragmentManager();
         RssItemListFragment listFragment =
                 (RssItemListFragment) fragMan.findFragmentById(R.id.fl_activity_blocly);
         RecyclerView recyclerView = listFragment.getRecyclerView();
+
+        // HOW DO I KNOW WHAT THIS CLICKED? will it always just click the first instance of the star?
         //onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
+
+
         //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
         RssItem theItem = listFragment.getRssItem(listFragment.getItemAdapter(), 1);
-        System.out.println(theItem.getTitle());
-        //assertEquals(true, theItem.isFavorite());
+
+        // this doesn't print for whatever reason.
+        //System.out.println(theItem.getTitle());
+
+        /*
+        This is where i'd call the methods to do my hypothetical onClickStar()
+         */
+
+        assertEquals(true, theItem.isFavorite());
         // just throwing this in here to have something for this test to run
         //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
-    } */
+    }
 }
