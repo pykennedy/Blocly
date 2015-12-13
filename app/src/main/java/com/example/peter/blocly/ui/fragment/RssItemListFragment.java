@@ -49,6 +49,9 @@ public class RssItemListFragment extends Fragment implements ItemAdapter.DataSou
     }
 
     private ItemAdapter itemAdapter;
+    public ItemAdapter getItemAdapter() {
+        return itemAdapter;
+    }
 
     private RssFeed currentFeed;
     private List<RssItem> currentItems = new ArrayList<RssItem>();

@@ -45,9 +45,13 @@ public class BloclyActivity extends ActionBarActivity
     private RssItem expandedItem = null;
     private boolean onTablet;
 
+    public RssItem getExpandedItem() {
+        return expandedItem;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Debug.startMethodTracing("BloclyActivity");
+        //Debug.startMethodTracing("BloclyActivity");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_blocly);
 
