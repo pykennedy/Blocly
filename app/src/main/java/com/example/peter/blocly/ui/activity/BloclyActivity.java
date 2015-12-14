@@ -132,7 +132,6 @@ public class BloclyActivity extends ActionBarActivity
         };
 
         drawerLayout.setDrawerListener(drawerToggle);
-
         navigationDrawerAdapter = new NavigationDrawerAdapter();
         navigationDrawerAdapter.setDelegate(this);
         navigationDrawerAdapter.setDataSource(this);

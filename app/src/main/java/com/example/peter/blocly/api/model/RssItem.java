@@ -57,6 +57,8 @@ public class RssItem extends Model{
         return favorite;
     }
 
+    public void setFavorite(boolean isFavorite) { favorite = isFavorite; }
+
     public boolean isArchived() {
         return archived;
     }

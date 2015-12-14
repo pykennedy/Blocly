@@ -228,7 +228,9 @@ public class RssItemListFragment extends Fragment implements ItemAdapter.DataSou
         delegate.get().onItemVisitClicked(this, rssItem);
     }
 
+    @Override
     public void starIsChecked(ItemAdapter itemAdapter, RssItem rssItem, boolean checked) {
-        //
+        rssItem.setFavorite(checked);
+        BloclyApplication.getSharedDataSource().updateFavoriteInTable(rssItem.getGuid(), checked);
     }
 }

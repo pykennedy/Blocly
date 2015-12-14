@@ -50,14 +50,21 @@ public class RssItemTable extends Table {
             return this;
         }
 
-        public void update(long id, SQLiteDatabase writeableDatabase) {
-            //
-        }
+
 
         @Override
         public long insert(SQLiteDatabase writableDB) {
             return writableDB.insert(RssItemTable.NAME, null, values);
         }
+    }
+
+    public void updateFavorite(String guID, SQLiteDatabase writeableDatabase, boolean isFavorited) {
+        ContentValues cv = new ContentValues();
+        if(isFavorited)
+            cv.put("COLUMN_FAVORITE",true);
+        else
+            cv.put("COLUMN_FAVORITE",true);
+        writeableDatabase.update(getName(), cv, "COLUMN_GUID="+guID, null);
     }
 
     public static String getLink(Cursor cursor) {

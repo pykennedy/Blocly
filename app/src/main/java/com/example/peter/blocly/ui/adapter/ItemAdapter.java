@@ -123,7 +123,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         this.expandedItemHeight = expandedItemHeight;
     }
 
-    class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements ImageLoadingListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+    public class ItemAdapterViewHolder extends RecyclerView.ViewHolder implements ImageLoadingListener, View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
         boolean onTablet;
         boolean contentExpanded;
@@ -144,6 +144,10 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         TextView callout;
 
         RssItem rssItem;
+
+        public RssItem getRssItem() {
+            return rssItem;
+        }
 
         public ItemAdapterViewHolder(View itemView) {
             super(itemView);
@@ -205,6 +209,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
                 headerWrapper.setVisibility(View.GONE);
             }
             animateContent(getExpandedItem() == rssItem);
+            favoriteCheckbox.setTag(this);
         }
 
         @Override
@@ -244,7 +249,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ItemAdapterVie
         @Override
         public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
             Log.v(TAG, "Checked changed to: " + isChecked);
-            //compoundButton.
+            getDelegate().starIsChecked(ItemAdapter.this, getRssItem(), isChecked);
         }
 
         private void animateContent(final boolean expand) {

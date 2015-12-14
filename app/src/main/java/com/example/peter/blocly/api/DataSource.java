@@ -318,5 +318,7 @@ public class DataSource {
                 .insert(databaseOpenHelper.getWritableDatabase());
     }
 
-    // make method to update rssItem to new values
+    public void updateFavoriteInTable(String guID, boolean isFavorite) {
+        rssItemTable.updateFavorite(guID, databaseOpenHelper.getWritableDatabase(), isFavorite);
+    }
 }

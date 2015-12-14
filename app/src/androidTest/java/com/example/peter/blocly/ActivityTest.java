@@ -3,9 +3,12 @@ package com.example.peter.blocly;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.test.SingleLaunchActivityTestCase;
+import android.view.View;
 
+import com.example.peter.blocly.api.DataSource;
 import com.example.peter.blocly.api.model.RssItem;
 import com.example.peter.blocly.ui.activity.BloclyActivity;
+import com.example.peter.blocly.ui.adapter.ItemAdapter;
 import com.example.peter.blocly.ui.fragment.RssItemListFragment;
 
 /**
@@ -50,6 +53,35 @@ public class ActivityTest extends SingleLaunchActivityTestCase<BloclyActivity> {
         RssItemListFragment listFragment =
                 (RssItemListFragment) fragMan.findFragmentById(R.id.fl_activity_blocly);
         RecyclerView recyclerView = listFragment.getRecyclerView();
+
+        final View favorite = recyclerView.findViewById(R.id.cb_rss_item_favorite_star);
+
+        favorite.post(new Runnable() {
+            @Override
+            public void run() {
+                favorite.performClick();
+            }
+        });
+        ItemAdapter.ItemAdapterViewHolder viewHolder = (ItemAdapter.ItemAdapterViewHolder) favorite.getTag();
+        RssItem item = viewHolder.getRssItem();
+        //Tests 
+        assertTrue(item.isFavorite());
+
+        //Database code
+
+        DataSource source = ((BloclyApplication) getActivity().getApplication()).getDataSource();
+        source.fetchRSSItemWithId(item.getRowId(), new DataSource.Callback<RssItem>() {
+            @Override
+            public void onSuccess(RssItem rssItem) {
+                assertTrue(rssItem.isFavorite());
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                //pfff
+                fail();
+            }
+        });
 
         // HOW DO I KNOW WHAT THIS CLICKED? will it always just click the first instance of the star?
         //onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
