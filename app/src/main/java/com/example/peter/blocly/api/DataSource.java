@@ -1,5 +1,6 @@
 package com.example.peter.blocly.api;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -318,7 +319,48 @@ public class DataSource {
                 .insert(databaseOpenHelper.getWritableDatabase());
     }
 
-    public void updateFavoriteInTable(String guID, boolean isFavorite) {
-        rssItemTable.updateFavorite(guID, databaseOpenHelper.getWritableDatabase(), isFavorite);
+
+    private static final String COLUMN_LINK = "link";
+    private static final String COLUMN_TITLE = "title";
+    private static final String COLUMN_DESCRIPTION = "description";
+    private static final String COLUMN_GUID = "guid";
+    private static final String COLUMN_PUB_DATE = "pub_date";
+    private static final String COLUMN_ENCLOSURE = "enclosure";
+    private static final String COLUMN_MIME_TYPE = "mime_type";
+    private static final String COLUMN_RSS_FEED = "rss_feed";
+    private static final String COLUMN_FAVORITE = "is_favorite";
+    private static final String COLUMN_ARCHIVED = "is_archived";
+
+    public void updateItemInTable(String link, String title, String description, String guID,
+                                      long pubDate, String enclosure, String mimeType, long rssFeedId,
+                                      boolean isFavorite, boolean isArchived) {
+        //rssItemTable.updateFavorite(guID, databaseOpenHelper.getWritableDatabase(), isFavorite);
+        ContentValues cv = new ContentValues();
+        if(link != null)
+            cv.put("link", link);
+        if(title != null)
+            cv.put("title", title);
+        if(description != null)
+            cv.put("description", description);
+        if(guID != null)
+            cv.put("guid", guID);
+        if(pubDate != -1)
+            cv.put("pub_date", pubDate);
+        if(enclosure != null)
+            cv.put("enclosure", enclosure);
+        if(mimeType != null)
+            cv.put("mime_type", mimeType);
+        if(rssFeedId != -1)
+            cv.put("rss_feed", rssFeedId);
+        if(isFavorite)
+            cv.put("is_favorite",1);
+        else
+            cv.put("is_favorite",0);
+        if(isArchived)
+            cv.put("is_archived",1);
+        else
+            cv.put("is_archived",0);
+        databaseOpenHelper.getWritableDatabase().update(rssItemTable.getName(), cv,
+                rssItemTable.getTableColumnID() + " = ?", new String[]{guID});
     }
 }

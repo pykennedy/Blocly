@@ -58,15 +58,6 @@ public class RssItemTable extends Table {
         }
     }
 
-    public void updateFavorite(String guID, SQLiteDatabase writeableDatabase, boolean isFavorited) {
-        ContentValues cv = new ContentValues();
-        if(isFavorited)
-            cv.put("COLUMN_FAVORITE",true);
-        else
-            cv.put("COLUMN_FAVORITE",true);
-        writeableDatabase.update(getName(), cv, "COLUMN_GUID="+guID, null);
-    }
-
     public static String getLink(Cursor cursor) {
         return getString(cursor, COLUMN_LINK);
     }
@@ -135,8 +126,13 @@ public class RssItemTable extends Table {
         return "rss_items";
     }
 
+    public String getTableColumnID() {
+        return COLUMN_ID;
+    }
+
     @Override
     public String getCreateStatement() {
+        System.out.println(COLUMN_ID);
         return "CREATE TABLE " + getName() + " ("
                 + COLUMN_ID + " INTEGER PRIMARY KEY,"
                 + COLUMN_LINK + " TEXT,"

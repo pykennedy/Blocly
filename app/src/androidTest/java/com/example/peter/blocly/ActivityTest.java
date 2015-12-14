@@ -21,12 +21,13 @@ public class ActivityTest extends SingleLaunchActivityTestCase<BloclyActivity> {
     }
 
     private BloclyActivity activity;
+    private boolean starShouldBeChecked;
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
 
-
+        starShouldBeChecked = false;
         activity = getActivity();
         FragmentManager fragMan = activity.getSupportFragmentManager();
         RssItemListFragment listFragment =
@@ -59,13 +60,18 @@ public class ActivityTest extends SingleLaunchActivityTestCase<BloclyActivity> {
         favorite.post(new Runnable() {
             @Override
             public void run() {
+                starShouldBeChecked = !starShouldBeChecked;
                 favorite.performClick();
             }
         });
         ItemAdapter.ItemAdapterViewHolder viewHolder = (ItemAdapter.ItemAdapterViewHolder) favorite.getTag();
         RssItem item = viewHolder.getRssItem();
-        //Tests 
-        assertTrue(item.isFavorite());
+
+        //Tests
+        if(starShouldBeChecked)
+            assertEquals(true, item.isFavorite());
+        else
+            assertEquals(false, item.isFavorite());
 
         //Database code
 
@@ -82,23 +88,5 @@ public class ActivityTest extends SingleLaunchActivityTestCase<BloclyActivity> {
                 fail();
             }
         });
-
-        // HOW DO I KNOW WHAT THIS CLICKED? will it always just click the first instance of the star?
-        //onView(withId(R.id.cb_rss_item_favorite_star)).perform(click());
-
-
-        //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
-        RssItem theItem = listFragment.getRssItem(listFragment.getItemAdapter(), 1);
-
-        // this doesn't print for whatever reason.
-        //System.out.println(theItem.getTitle());
-
-        /*
-        This is where i'd call the methods to do my hypothetical onClickStar()
-         */
-
-        assertEquals(true, theItem.isFavorite());
-        // just throwing this in here to have something for this test to run
-        //assertNotNull(recyclerView.findViewById(R.id.cb_rss_item_favorite_star));
     }
 }

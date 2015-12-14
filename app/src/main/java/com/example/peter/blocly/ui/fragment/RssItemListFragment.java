@@ -231,6 +231,12 @@ public class RssItemListFragment extends Fragment implements ItemAdapter.DataSou
     @Override
     public void starIsChecked(ItemAdapter itemAdapter, RssItem rssItem, boolean checked) {
         rssItem.setFavorite(checked);
-        BloclyApplication.getSharedDataSource().updateFavoriteInTable(rssItem.getGuid(), checked);
+
+       /* updateItemInTable(String link, String title, String description, String guID,
+        long pubDate, String enclosure, String mimeType, long rssFeedId,
+        boolean isFavorite, boolean isArchived); */
+
+        BloclyApplication.getSharedDataSource().updateItemInTable(null, null, null,
+                String.valueOf(rssItem.getRowId()), -1, null, null, -1, checked, false);
     }
 }
