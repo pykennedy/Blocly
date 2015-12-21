@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.test.SingleLaunchActivityTestCase;
 import android.view.View;
 
-import com.example.peter.blocly.api.DataSource;
 import com.example.peter.blocly.api.model.RssItem;
 import com.example.peter.blocly.ui.activity.BloclyActivity;
 import com.example.peter.blocly.ui.adapter.ItemAdapter;
@@ -68,25 +67,28 @@ public class ActivityTest extends SingleLaunchActivityTestCase<BloclyActivity> {
         RssItem item = viewHolder.getRssItem();
 
         //Tests
-        if(starShouldBeChecked)
-            assertEquals(true, item.isFavorite());
-        else
-            assertEquals(false, item.isFavorite());
+        assertEquals(starShouldBeChecked, item.isFavorite());
 
         //Database code
+        RssItem retrievedItem = ((BloclyApplication)getActivity().getApplication())
+                .getDataSource()
+                .fetchRssItemSync(item.getRowId());
 
-        DataSource source = ((BloclyApplication) getActivity().getApplication()).getDataSource();
-        source.fetchRSSItemWithId(item.getRowId(), new DataSource.Callback<RssItem>() {
-            @Override
-            public void onSuccess(RssItem rssItem) {
-                assertTrue(rssItem.isFavorite());
-            }
+        assertNotNull(retrievedItem);
+        assertTrue(starShouldBeChecked == retrievedItem.isFavorite());
 
-            @Override
-            public void onError(String errorMessage) {
-                //pfff
-                fail();
-            }
-        });
+        /*
+        //Datasource code
+    public RssItem fetchRssItemSync(long rowId){
+        Cursor cursor = rssItemTable.fetchRow(databaseOpenHelper.getReadableDatabase(), rowId);
+        RssItem item = null;
+        if (cursor.moveToFirst()) {
+            item = itemFromCursor(cursor);
+        }
+        cursor.close();
+        return item;
+    }
+         */
+
     }
 }

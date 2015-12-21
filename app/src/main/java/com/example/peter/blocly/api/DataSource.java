@@ -299,6 +299,16 @@ public class DataSource {
         return getFeedsNetworkRequest.getErrorCode() != 0;
     }
 
+    public RssItem fetchRssItemSync(long rowId){
+        Cursor cursor = rssItemTable.fetchRow(databaseOpenHelper.getReadableDatabase(), rowId);
+        RssItem item = null;
+        if (cursor.moveToFirst()) {
+            item = itemFromCursor(cursor);
+        }
+        cursor.close();
+        return item;
+    }
+
     long insertResponseToDatabase(long feedId, GetFeedsNetworkRequest.ItemResponse itemResponse) {
         long itemPubDate = System.currentTimeMillis();
         DateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy kk:mm:ss z", Locale.ENGLISH);
